@@ -1,5 +1,5 @@
-# GeoDAIS Móvil
-
+# GeoDAIS
+Proyecto movil para dibular poligono, lineas y puntos en campo
 # Developer
 Jorge Chafloque Millones
 
