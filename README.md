@@ -8,6 +8,11 @@ Aplicacion Móvil de la Sub Direccion de Monitoreo
 ## 🚀 Características principales
 - Cargar de mapas de Imagen Satelital
 - Geolocalizacion de GPS
+- Dibujo de poligonos.
+- Dibujo de lineas.
+- Dibujo de puntos.
+- Toma de fotos con coordenadas.
+- Toma de datos de la persona que opera el aplicativo movil.
 
 
 ## 🧰 Tecnologías utilizadas
