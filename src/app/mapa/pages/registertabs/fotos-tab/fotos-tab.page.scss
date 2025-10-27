@@ -1,0 +1,98 @@
+.uppercase-input::part(native) {
+  text-transform: uppercase;
+}
+
+ion-card-header {
+  background-color: #0DA642; // El verde como en la sección productor
+  color: white;
+}
+
+
+
+ion-list-header {
+  padding-bottom: 8px;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; // 2 columnas como en productor-tab
+  gap: 16px;
+  padding: 0 0 16px; // El padding horizontal lo maneja ion-card-content
+}
+
+.photo-container {
+  position: relative;
+
+  .photo-box {
+    width: 100%;
+    aspect-ratio: 1.25; // Un aspect ratio más general que el de DNI
+    border: 2px dashed var(--ion-color-medium);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: var(--ion-color-light-tint);
+    transition: background-color 0.3s ease;
+
+    &.add-photo-box {
+      cursor: pointer;
+      &:hover {
+        background-color: var(--ion-color-light-shade);
+      }
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    ion-icon {
+      font-size: 40px;
+      color: var(--ion-color-medium);
+    }
+
+    ion-label {
+      font-size: 0.9em;
+      color: var(--ion-color-medium);
+      margin-top: 8px;
+    }
+  }
+
+  .delete-photo-btn {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    --background: rgba(255, 255, 255, 0.7);
+    --background-hover: rgba(255, 255, 255, 1);
+    --border-radius: 50%;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+// Estilos para el visor de imágenes (modal)
+.viewer-container {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-viewer-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
+  font-size: 2rem;
+  --color: white;
+}
+
+.viewer-swiper {
+  width: 100%;
+  height: 100%;
+}

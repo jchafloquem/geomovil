@@ -1,0 +1,510 @@
+#map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+}
+
+.geo-label {
+  background-color: transparent;
+  border: none;
+  font-weight: bold;
+  font-size: 20px;
+  color: black;
+  z-index: 1000; /* Ensure the tooltip is above other elements */
+}
+
+ion-header {
+  // Hacemos el contenedor del header transparente para que el margen
+  // de la barra de herramientas sea visible, especialmente en iOS.
+  background: transparent;
+  // Evita que el header transparente bloquee interacciones con el mapa.
+  pointer-events: none;
+}
+ion-toolbar {
+  // La barra de herramientas sí debe ser interactiva.
+  pointer-events: auto;
+  --background: #0D9BD7;
+  margin: calc(var(--ion-safe-area-top, 0px) + 0px) 0px 0px;
+  --padding-top: 35px;
+  --padding-start: 5px;
+  --padding-end: 5px;
+  --padding-bottom: 5px;
+}
+
+ion-title {
+  // Con los ion-buttons en su sitio, el título se centra automáticamente.
+  // Solo necesitamos centrar su contenido interno (icono y texto).
+  position: static;
+  padding: 0;
+
+  // Estilos de fuente
+  font-size: 1.5em;
+  font-weight: bold;
+  color: white;
+  // Centramos el título y el icono
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.zoom-extend-btn-wrapper {
+  top: calc(var(--ion-safe-area-top, 0px) + 10px);
+  right: 15px;
+  margin-inline-end: 0;
+  z-index: 1000;
+  overflow: visible;
+
+  ion-fab-button {
+    width: 40px;
+    height: 40px;
+    --background: #0D9BD7; /* Azul de Ionic */
+    --color: white;
+    --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.zoom-in-btn-wrapper,
+.zoom-out-btn-wrapper {
+  right: 15px;
+  margin-inline-end: 0;
+  z-index: 1000;
+  overflow: visible;
+
+  ion-fab-button {
+    width: 40px;
+    height: 40px;
+    --background: #0D9BD7;
+    --color: white;
+    --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.zoom-in-btn-wrapper {
+  top: calc(var(--ion-safe-area-top, 0px) + 60px); /* Debajo de zoom-extend */
+}
+
+.zoom-out-btn-wrapper {
+  top: calc(var(--ion-safe-area-top, 0px) + 110px); /* Debajo de zoom-in */
+}
+
+.locate-btn-wrapper {
+  /* Estilos de posicionamiento para el contenedor ion-fab */
+  bottom: 200px;
+  right: 15px;
+  /* Anulamos el margen por defecto de Ionic para un posicionamiento preciso */
+  margin-inline-end: 0;
+  z-index: 1000; /* Asegura que esté sobre el mapa */
+  overflow: visible;
+
+  /* Estilos de apariencia para el botón interno */
+  ion-fab-button {
+    width: 40px;
+    height: 40px;
+    --background: #0D9BD7;
+    --color: white;
+    --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.gps-panel {
+  position: absolute;
+  bottom: 20px;
+  left: 8px;
+  right: 8px;
+  /* Efecto de desenfoque para el fondo */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  font-size: 13px;
+  z-index: 2000;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden; /* Para que los bordes redondeados se apliquen a las filas */
+}
+
+/* línea vertical central */
+.gps-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateX(-0.5px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* filas de pares label/value */
+.gps-panel .row {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 columnas de celdas */
+  gap: 16px;
+  padding: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  min-height: 40px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Colores de fondo para las filas, estilo hoja de cálculo */
+.gps-panel .row:nth-child(odd) {
+  background-color: rgba(13, 155, 215, 0.7); /* #0D9BD7 con transparencia */
+}
+
+.gps-panel .row:nth-child(even) {
+  background-color: rgba(13, 155, 215, 0.7); /* #0D9BD7 con transparencia */
+}
+
+.gps-panel .row:last-child {
+  border-bottom: none;
+}
+
+/* cada par label/value */
+.gps-panel .cell {
+  display: flex;
+  justify-content: space-between; /* label a la izquierda, value a la derecha */
+  align-items: center;            /* centra verticalmente */
+}
+
+/* etiquetas */
+.gps-panel .label {
+  font-weight: 600;
+  color: #ccc;
+  white-space: nowrap;
+}
+
+/* valores */
+.gps-panel .value {
+  font-family: Arial, Helvetica, sans-serif;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* Estilos para el ion-loading personalizado */
+/* Usamos ::ng-deep para que los estilos se apliquen al componente ion-loading,
+   que se renderiza fuera del DOM de esta página. */
+::ng-deep .custom-loading .loading-wrapper {
+  border-radius: 16px;
+}
+
+.clear-btn-wrapper {
+  bottom: 150px;
+  right: 15px;
+  margin-inline-end: 0;
+  z-index: 1000;
+  overflow: visible;
+
+  ion-fab-button {
+    width: 40px;
+    height: 40px;
+    --background: #d11a2a; /* rojo */
+    --color: white;
+    --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.satellite-layer-btn-wrapper,
+.streets-layer-btn-wrapper {
+  bottom: 150px;
+  z-index: 1000;
+  overflow: visible;
+  ion-fab-button {
+    width: 40px;
+    height: 40px;
+    --background: white;
+    --color: #333;
+    --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease-in-out;
+    &.active-layer {
+      --background: #0D9BD7; /* Azul primario de Ionic */
+      --color: white;
+    }
+  }
+}
+
+.satellite-layer-btn-wrapper {
+  left: 50%;
+  transform: translateX(calc(-100% - 4px)); /* Mueve a la izquierda del centro */
+}
+.streets-layer-btn-wrapper {
+  left: 50%;
+  transform: translateX(4px); /* Mueve a la derecha del centro */
+}
+
+.crosshair-icon {
+  color: #ff0000;
+  font-weight: bold;
+  font-size: 30px;
+  text-align: center;
+  line-height: 30px;
+  text-shadow: 0 0 3px white;
+}
+
+.distance-tooltip {
+  background-color: rgba(0, 0, 0, 0.7);
+  border: none;
+  box-shadow: none;
+  color: white;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.initial-spinner-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente para que el spinner destaque */
+  z-index: 9999;
+
+  ion-spinner {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.download-map-btn-wrapper {
+  top: calc(var(--ion-safe-area-top, 0px) + 160px); /* Debajo de zoom-out */
+  right: 15px;
+  margin-inline-end: 0;
+  z-index: 1000;
+  overflow: visible;
+
+  ion-fab-button {
+    width: 40px;
+    height: 40px;
+    --background: #0D9BD7;
+    --color: white;
+    --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+}
+::ng-deep .vertex-tooltip {
+  background-color: #0D9BD7;
+  border: 1px solid #fff;
+  color: #fff;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: none;
+}
+.edit-mode-btn-wrapper {
+  top: calc(var(--ion-safe-area-top, 0px) + 210px); /* Debajo de download */
+  right: 15px;
+  margin-inline-end: 0;
+  z-index: 1000;
+  overflow: visible;
+
+  ion-fab-button {
+    width: 40px;
+    height: 40px;
+    --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Estilos para el toast de múltiples líneas */
+/* Usamos ::ng-deep para que los estilos se apliquen al componente ion-toast,
+   que se renderiza fuera del DOM de esta página. */
+::ng-deep .multiline-toast .toast-message {
+  white-space: pre-line; /* Respeta los saltos de línea (\n) */
+  text-align: center;    /* Centra el texto, útil para toasts en el medio */
+}
+
+/* Estilos para los botones de acción personalizados (dibujar, punto, etc.) */
+.action-btn {
+  position: absolute;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+  z-index: 1000;
+  color: white;
+  font-size: 24px;
+  transition: background-color 0.3s ease;
+}
+
+.draw-walk-btn {
+  bottom: 250px; // Posición base
+  background-color: #0D9BD7; // Restaurado a tu color azul
+  &.active {
+    background-color: #eb445a; // Color danger (rojo)
+  }
+}
+
+.draw-line-btn {
+  bottom: 300px; // 250px (base) + 40px (alto botón) + 10px (gap)
+  background-color: #0D9BD7; // Restaurado a tu color azul
+  &.active {
+    background-color: #eb445a; // Color danger (rojo)
+  }
+}
+
+.add-point-btn {
+  // Se posiciona encima del botón de dibujar polígono, en el mismo lugar que el botón de "añadir vértice"
+  bottom: 350px; // 300px (línea) + 40px + 10px
+  background-color: #0D9BD7; // Restaurado a tu color azul
+}
+
+.add-vertex-btn {
+  // Aparece encima del botón de detener cuando se está dibujando
+  bottom: 350px; // Posición más alta para no solapar con ningún botón de "stop"
+  background-color: #0D9BD7; // Restaurado a tu color azul
+}
+
+// Estilos para los controles de Leaflet y plugins, que requieren ::ng-deep para sobreescribir los estilos globales.
+:host ::ng-deep {
+  /* Ajuste para posicionar la escala de Leaflet sobre el panel GPS */
+  .leaflet-bottom.leaflet-left {
+    bottom: 150px; // Lo subimos para que quede sobre el panel GPS
+    z-index: 2001; // Aseguramos que esté por encima del panel GPS
+
+    .leaflet-control-scale {
+      background: rgba(13, 155, 215, 0.7); // Mismo fondo que el panel GPS
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 4px;
+      padding: 2px 5px;
+      color: white;
+      text-shadow: 0 0 2px black;
+    }
+
+    .leaflet-control-scale-line {
+      /* Se quita el fondo para que el texto sea visible */
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
+      /* Se añade espacio inferior para separar el texto de la línea */
+      padding-bottom: 5px;
+      position: relative; /* Necesario para el pseudo-elemento ::after */
+      line-height: 1; /* Asegura que el texto no tenga espacio extra */
+    }
+
+    /* Se crea la línea visual usando un pseudo-elemento */
+    .leaflet-control-scale-line::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background-color: white;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.6);
+    }
+  }
+
+  /* Estilos para que el buscador se parezca a los botones de zoom */
+  .leaflet-control-geosearch {
+    // El botón de búsqueda (lupa)
+    a.leaflet-bar-part {
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      background-color: #0D9BD7; // Mismo azul que los botones de zoom
+      border-radius: 50%; // Totalmente redondo
+      border: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); // Misma sombra
+
+      // Cambiamos el color del icono de la lupa a blanco
+      &::before {
+        border-top-color: white;
+        width: 8px;
+        top: 23px;
+        left: 20px;
+      }
+      &::after {
+        border-color: white;
+        width: 12px;
+        height: 12px;
+        top: 14px;
+        left: 14px;
+      }
+
+      // Efecto hover similar a los botones de Ionic
+      &:hover {
+        background-color: #0b84b8;
+      }
+    }
+
+    // Cuando el buscador está activo (formulario visible)
+    &.active {
+      // Hacemos que el botón y el formulario parezcan una sola pieza
+      a.leaflet-bar-part {
+        border-radius: 20px 0 0 20px; // Redondeamos solo las esquinas izquierdas
+      }
+
+      form {
+        height: 40px;
+        // Posicionamos el formulario justo a la derecha del botón
+        left: 40px;
+        // Redondeamos las esquinas derechas
+        border-radius: 0 20px 20px 0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        border: none;
+        background-color: #fff;
+      }
+
+      form input {
+        height: 40px;
+        border-radius: 0 20px 20px 0;
+      }
+    }
+
+    // Estilos para la lista de resultados
+    .results {
+      margin-top: 5px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      border: 1px solid #ddd;
+    }
+  }
+}
+ion-toolbar ion-buttons[slot="end"] {
+  .network-status-button {
+    // Aumenta el área táctil del botón
+    --padding-start: 8px;
+    --padding-end: 8px;
+
+    ion-icon {
+      // Aumenta el tamaño del ícono
+      font-size: 1.8rem;
+      // Añadimos una transición para suavizar el cambio de color
+      transition: color 0.3s ease-in-out;
+    }
+
+    // Animación de pulso para el cambio de estado
+    ion-icon.status-changed {
+      animation: pulse-status 700ms ease-out;
+    }
+  }
+}
+
+@keyframes pulse-status {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

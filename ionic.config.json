@@ -1,0 +1,15 @@
+{
+  "name": "GeoMovil",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone",
+  "proxies": [
+    {
+      "path": "/v1",
+      "proxyUrl": "https://api.decolecta.com",
+      "secure": false,
+      "changeOrigin": true
+    }
+  ]
+}
